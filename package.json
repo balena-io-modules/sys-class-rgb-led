@@ -5,6 +5,7 @@
   "main": "build/index.js",
   "scripts": {
     "build": "tsc",
+    "prepublish": "npm run build",
     "lint": "resin-lint --typescript lib",
     "lint-fix": "resin-lint --fix --typescript lib"
   },
