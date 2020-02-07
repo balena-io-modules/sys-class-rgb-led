@@ -4,13 +4,15 @@ Animates `/sys/class/leds` rgb leds
 
 ## Example
 
+For controlling an RGB led using `/sys/class/leds/pca963x:{red,green,blue}/brightness` files:
+
 ```typescript
 import { RGBLed, breatheGreen, blinkWhite } from 'sys-class-rgb-led';
 
 const led = new RGBLed([
-    '/sys/class/leds/pca963x:red/brightness',
-    '/sys/class/leds/pca963x:green/brightness',
-    '/sys/class/leds/pca963x:blue/brightness',
+    'pca963x:red',
+    'pca963x:green',
+    'pca963x:blue',
 ]);
 await led.setStaticColor([0.5, 0.5, 0.5]);
 // or

@@ -15,19 +15,23 @@
  */
 
 import { promises as fs } from 'fs';
+import { join } from 'path';
 
 class Led {
 	private handle: fs.FileHandle;
 	private ready: Promise<void>;
 	private lastValue?: number;
 
-	constructor(private path: string) {
+	constructor(private name: string) {
 		this.ready = this.open();
 	}
 
 	private async open() {
 		if (this.handle === undefined) {
-			this.handle = await fs.open(this.path, 'w');
+			this.handle = await fs.open(
+				join('/sys/class/leds', this.name, 'brightness'),
+				'w',
+			);
 		}
 	}
 
@@ -94,8 +98,8 @@ export class RGBLed {
 		// noop until this.setAnimation() is called
 	};
 
-	constructor(paths: [string, string, string]) {
-		this.leds = paths.map(path => new Led(path)) as [Led, Led, Led];
+	constructor(names: [string, string, string]) {
+		this.leds = names.map(name => new Led(name)) as [Led, Led, Led];
 		this.setStaticColor([0, 0, 0]);
 		this.loop();
 	}
