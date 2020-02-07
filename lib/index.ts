@@ -30,13 +30,11 @@ class Led {
 	}
 
 	private async open() {
-		if (this.handle === undefined) {
-			this.maxBrightness = parseInt(
-				await fs.readFile(join(LEDS_DIR, this.name, 'max_brightness'), 'utf8'),
-				10,
-			);
-			this.handle = await fs.open(join(LEDS_DIR, this.name, 'brightness'), 'w');
-		}
+		this.maxBrightness = parseInt(
+			await fs.readFile(join(LEDS_DIR, this.name, 'max_brightness'), 'utf8'),
+			10,
+		);
+		this.handle = await fs.open(join(LEDS_DIR, this.name, 'brightness'), 'w');
 	}
 
 	public async close() {
