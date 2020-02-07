@@ -18,9 +18,12 @@ import { promises as fs } from 'fs';
 
 class Led {
 	private handle: fs.FileHandle;
+	private ready: Promise<void>;
 	private lastValue?: number;
 
-	constructor(private path: string) {}
+	constructor(private path: string) {
+		this.ready = this.open();
+	}
 
 	private async open() {
 		if (this.handle === undefined) {
@@ -28,13 +31,18 @@ class Led {
 		}
 	}
 
+	public async close() {
+		await this.ready;
+		await this.handle.close();
+	}
+
 	public async setIntensity(intensity: number) {
+		await this.ready;
 		if (intensity < 0 || intensity > 1) {
 			throw new Error('Led intensity must be between 0 and 1');
 		}
 		const value = Math.round(intensity * 255);
 		if (value !== this.lastValue) {
-			await this.open();
 			await this.handle.write(value.toString(), 0);
 			// On a regular file we would also need to truncate to the written value length but it looks like it's not the case on sysfs files
 			this.lastValue = value;
@@ -78,14 +86,28 @@ export class RGBLed {
 	private leds: [Led, Led, Led];
 	private animation: AnimationFunction;
 	private period: number; // in ms
+	private alive = true;
 	private wakeUp = () => {
 		// noop until this.loop() is called
+	};
+	private lastRequestedColorSet = () => {
+		// noop until this.setAnimation() is called
 	};
 
 	constructor(paths: [string, string, string]) {
 		this.leds = paths.map(path => new Led(path)) as [Led, Led, Led];
 		this.setStaticColor([0, 0, 0]);
 		this.loop();
+	}
+
+	public async close() {
+		this.alive = false;
+		this.wakeUp();
+		await Promise.all(
+			this.leds.map(l => {
+				l.close();
+			}),
+		);
 	}
 
 	private setFrequency(frequency: number) {
@@ -97,9 +119,11 @@ export class RGBLed {
 	}
 
 	private async loop() {
-		while (true) {
+		while (this.alive) {
 			const start = new Date().getTime();
 			await this.setColor(this.animation(start));
+			// Signal that the requested color has been set
+			this.lastRequestedColorSet();
 			const end = new Date().getTime();
 			const duration = end - start;
 			const { promise, cancel } = cancellableDelay(this.period - duration);
@@ -108,13 +132,16 @@ export class RGBLed {
 		}
 	}
 
-	public setAnimation(animation: AnimationFunction, frequency = 10) {
+	public async setAnimation(animation: AnimationFunction, frequency = 10) {
 		this.animation = animation;
 		this.setFrequency(frequency);
+		await new Promise(resolve => {
+			this.lastRequestedColorSet = resolve;
+		});
 	}
 
-	public setStaticColor(color: Color) {
-		this.setAnimation(() => color, 0);
+	public async setStaticColor(color: Color) {
+		await this.setAnimation(() => color, 0);
 	}
 
 	private async setColor(color: Color) {
