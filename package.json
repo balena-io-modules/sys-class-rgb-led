@@ -1,0 +1,41 @@
+{
+  "name": "sys-class-rgb-led",
+  "version": "1.0.0",
+  "description": "Animates /sys/class/leds rgb leds",
+  "main": "build/index.js",
+  "scripts": {
+    "build": "tsc",
+    "lint": "resin-lint --typescript lib",
+    "lint-fix": "resin-lint --fix --typescript lib"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint && npm run build"
+    }
+  },
+  "files": [
+    "build"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/balena-io-modules/sys-class-rgb-led.git"
+  },
+  "keywords": [
+    "rgb",
+    "led",
+    "leds",
+    "sys"
+  ],
+  "author": "Alexis Svinartchouk <alexis@balena.io>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/balena-io-modules/sys-class-rgb-led/issues"
+  },
+  "homepage": "https://github.com/balena-io-modules/sys-class-rgb-led#readme",
+  "devDependencies": {
+    "@types/node": "^12.12.26",
+    "husky": "^4.2.1",
+    "resin-lint": "^3.2.4",
+    "typescript": "^3.7.5"
+  }
+}
