@@ -17,9 +17,12 @@
 import { promises as fs } from 'fs';
 import { join } from 'path';
 
+const LEDS_DIR = '/sys/class/leds';
+
 class Led {
 	private handle: fs.FileHandle;
 	private ready: Promise<void>;
+	private maxBrightness: number;
 	private lastValue?: number;
 
 	constructor(private name: string) {
@@ -28,10 +31,11 @@ class Led {
 
 	private async open() {
 		if (this.handle === undefined) {
-			this.handle = await fs.open(
-				join('/sys/class/leds', this.name, 'brightness'),
-				'w',
+			this.maxBrightness = parseInt(
+				await fs.readFile(join(LEDS_DIR, this.name, 'max_brightness'), 'utf8'),
+				10,
 			);
+			this.handle = await fs.open(join(LEDS_DIR, this.name, 'brightness'), 'w');
 		}
 	}
 
@@ -45,7 +49,7 @@ class Led {
 		if (intensity < 0 || intensity > 1) {
 			throw new Error('Led intensity must be between 0 and 1');
 		}
-		const value = Math.round(intensity * 255);
+		const value = Math.round(intensity * this.maxBrightness);
 		if (value !== this.lastValue) {
 			await this.handle.write(value.toString(), 0);
 			// On a regular file we would also need to truncate to the written value length but it looks like it's not the case on sysfs files
