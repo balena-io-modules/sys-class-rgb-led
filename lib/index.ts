@@ -141,7 +141,7 @@ export class RGBLed {
 	public async setAnimation(animation: AnimationFunction, frequency = 10) {
 		this.animation = animation;
 		this.setFrequency(frequency);
-		await new Promise(resolve => {
+		await new Promise<void>(resolve => {
 			this.lastRequestedColorSet = resolve;
 		});
 	}

@@ -37,6 +37,6 @@
     "@types/node": "^12.12.26",
     "husky": "^4.2.1",
     "resin-lint": "^3.2.4",
-    "typescript": "^3.7.5"
+    "typescript": "^4.1.2"
   }
 }
