@@ -1,46 +1,70 @@
+- commits:
+    - subject: Replace resin-lint with @balena/lint
+      hash: 73294e1921c45a30cddb60cc1577c1fab03ca4c5
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Alexis Svinartchouk
+    - subject: Update typescript to v4.1.2
+      hash: 1c109219023ee56d546e4454f4dc2698bc6b2369
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Alexis Svinartchouk
+    - subject: Add versionbot changelog
+      hash: 0a5b1533dfab9caebe6b43c987fdfcabf93251db
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Alexis Svinartchouk
+  version: 2.1.1
+  date: 2020-12-01T11:16:45.251Z
 - version: 2.1.0
-  date: 2020-02-07T18:20:04Z
+  date: 2020-02-07T18:20:04.000Z
   commits:
     - hash: f8486be6480ca173fe9de6b01235e9dc0f681514
       author: Alexis Svinartchouk
       footers:
         change-type: minor
       subject: Publish types and source map
-      body:
+      body: null
 - version: 2.0.0
-  date: 2020-02-07T17:46:19Z
+  date: 2020-02-07T17:46:19.000Z
   commits:
     - hash: 2ef696daf99450cc6dafda1a9040acc78c655c8c
       author: Alexis Svinartchouk
       footers:
-        changelog-entry: Add led.close method, setStaticColor & setAnimation return Promises
+        changelog-entry: 'Add led.close method, setStaticColor & setAnimation return Promises'
         change-type: minor
-      subject: Add led.close method, setStaticColor & setAnimation return Promises
-      body:
+      subject: 'Add led.close method, setStaticColor & setAnimation return Promises'
+      body: null
     - hash: 748e4ffd568fb8c1540be17beb8caa7c5e219d0b
       author: Alexis Svinartchouk
       footers:
         changelog-entry: Use led names instead of full path
         change-type: major
       subject: Use led names instead of full path
-      body:
+      body: null
     - hash: 8496259c3fbd43ab229c7dc206528c289a5165a7
       author: Alexis Svinartchouk
       footers:
         changelog-entry: Read max_brightness file instead of assuming 255
         change-type: patch
       subject: Read max_brightness file instead of assuming 255
-      body:
+      body: null
     - hash: aa001dcb57ff4f0beb09b43fa87a0dfc6c410d65
       author: Alexis Svinartchouk
       footers:
         change-type: patch
       subject: Remove useless undefined check
-      body:
+      body: null
     - hash: 7defed21ef36af34caf70c570a982b8fdd226958
       author: Alexis Svinartchouk
       footers:
         changelog-entry: Add prepublish script
         change-type: patch
       subject: Add prepublish script
-      body:
+      body: null
