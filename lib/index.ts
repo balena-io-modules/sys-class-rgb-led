@@ -66,7 +66,7 @@ function delay(duration: number): Promise<void> {
 			// Never resolve
 		});
 	} else {
-		return new Promise(resolve => {
+		return new Promise((resolve) => {
 			setTimeout(resolve, duration);
 		});
 	}
@@ -81,7 +81,7 @@ function cancellableDelay(
 			maybeCancel();
 		}
 	};
-	const cancelPromise: Promise<void> = new Promise(resolve => {
+	const cancelPromise: Promise<void> = new Promise((resolve) => {
 		maybeCancel = resolve;
 	});
 	const promise = Promise.race([delay(duration), cancelPromise]);
@@ -101,7 +101,7 @@ export class RGBLed {
 	};
 
 	constructor(names: [string, string, string]) {
-		this.leds = names.map(name => new Led(name)) as [Led, Led, Led];
+		this.leds = names.map((name) => new Led(name)) as [Led, Led, Led];
 		this.setStaticColor([0, 0, 0]);
 		this.loop();
 	}
@@ -110,7 +110,7 @@ export class RGBLed {
 		this.alive = false;
 		this.wakeUp();
 		await Promise.all(
-			this.leds.map(l => {
+			this.leds.map((l) => {
 				l.close();
 			}),
 		);
@@ -141,7 +141,7 @@ export class RGBLed {
 	public async setAnimation(animation: AnimationFunction, frequency = 10) {
 		this.animation = animation;
 		this.setFrequency(frequency);
-		await new Promise(resolve => {
+		await new Promise<void>((resolve) => {
 			this.lastRequestedColorSet = resolve;
 		});
 	}

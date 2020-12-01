@@ -1,0 +1,46 @@
+- version: 2.1.0
+  date: 2020-02-07T18:20:04Z
+  commits:
+    - hash: f8486be6480ca173fe9de6b01235e9dc0f681514
+      author: Alexis Svinartchouk
+      footers:
+        change-type: minor
+      subject: Publish types and source map
+      body:
+- version: 2.0.0
+  date: 2020-02-07T17:46:19Z
+  commits:
+    - hash: 2ef696daf99450cc6dafda1a9040acc78c655c8c
+      author: Alexis Svinartchouk
+      footers:
+        changelog-entry: Add led.close method, setStaticColor & setAnimation return Promises
+        change-type: minor
+      subject: Add led.close method, setStaticColor & setAnimation return Promises
+      body:
+    - hash: 748e4ffd568fb8c1540be17beb8caa7c5e219d0b
+      author: Alexis Svinartchouk
+      footers:
+        changelog-entry: Use led names instead of full path
+        change-type: major
+      subject: Use led names instead of full path
+      body:
+    - hash: 8496259c3fbd43ab229c7dc206528c289a5165a7
+      author: Alexis Svinartchouk
+      footers:
+        changelog-entry: Read max_brightness file instead of assuming 255
+        change-type: patch
+      subject: Read max_brightness file instead of assuming 255
+      body:
+    - hash: aa001dcb57ff4f0beb09b43fa87a0dfc6c410d65
+      author: Alexis Svinartchouk
+      footers:
+        change-type: patch
+      subject: Remove useless undefined check
+      body:
+    - hash: 7defed21ef36af34caf70c570a982b8fdd226958
+      author: Alexis Svinartchouk
+      footers:
+        changelog-entry: Add prepublish script
+        change-type: patch
+      subject: Add prepublish script
+      body:
