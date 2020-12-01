@@ -14,24 +14,21 @@ const led = new RGBLed([
     'pca963x:green',
     'pca963x:blue',
 ]);
-await led.setStaticColor([0.5, 0.5, 0.5]);
+await led.setColor([0.5, 0.5, 0.5]);
 // or
-await led.setAnimation(breatheGreen);
-// or
-await led.setAnimation(blinkWhite);
+const animator = new Animator([{ animation: breatheGreen, rgbLeds: [led] }], 25)
 
-await led.setStaticColor([0, 0, 0]);
+// change the animation:
+animator.mapping = [{ animation: blinkWhite, rgbLeds: [led] }];
+
+// turn it off
+animator.setFrequency(0);
+await led.setColor([0, 0, 0]);
 await led.close();
 ```
 
 A `Color` is an `Array` of 3 numbers between 0 and 1.
 
-An `AnimationFunction` is a function that takes a timestamp in milliseconds as parameter and returns a `Color`.
+An `AnimationFunction` is a function that takes a timestamp in seconds as parameter and returns a `Color`.
 
-`setAnimation` accepts a second optional `frequency` parameter, the default value is 10Hz.
-
-`setAnimation` returns a `Promise` that will resolve when the first color of the animation has been set.
-
-`setStaticColor` returns a `Promise` that will resolve when the color has been set.
-
-This might be useful if you want to be sure that the color has been set before calling `close()`.
+`Animator` accepts a second optional `frequency` parameter, the default value is 10Hz.
