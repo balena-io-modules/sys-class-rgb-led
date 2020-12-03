@@ -32,3 +32,5 @@ A `Color` is an `Array` of 3 numbers between 0 and 1.
 An `AnimationFunction` is a function that takes a timestamp in seconds as parameter and returns a `Color`.
 
 `Animator` accepts a second optional `frequency` parameter, the default value is 10Hz.
+
+Check the `example.ts` file for a 16 rgb led rainbow animation

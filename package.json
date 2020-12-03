@@ -6,8 +6,8 @@
   "scripts": {
     "build": "tsc",
     "prepublish": "npm run build",
-    "lint": "balena-lint --typescript lib",
-    "lint-fix": "balena-lint --fix --typescript lib"
+    "lint": "balena-lint --typescript lib example.ts && tsc --noEmit example.ts",
+    "lint-fix": "balena-lint --fix --typescript lib example.ts"
   },
   "husky": {
     "hooks": {
