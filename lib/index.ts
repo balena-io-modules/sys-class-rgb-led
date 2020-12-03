@@ -27,6 +27,9 @@ class Led {
 
 	constructor(private name: string) {
 		this.ready = this.open();
+		this.ready.catch(() => {
+			// Avoid unhandled rejections
+		});
 	}
 
 	private async open() {
@@ -59,98 +62,18 @@ class Led {
 export type Color = [number, number, number];
 export type AnimationFunction = (t: number) => Color;
 
-function delay(duration: number): Promise<void> {
-	// delay that accepts Infinity
-	if (duration === Infinity) {
-		return new Promise(() => {
-			// Never resolve
-		});
-	} else {
-		return new Promise((resolve) => {
-			setTimeout(resolve, duration);
-		});
-	}
-}
-
-function cancellableDelay(
-	duration: number,
-): { promise: Promise<void>; cancel: () => void } {
-	let maybeCancel: () => void;
-	const cancel = () => {
-		if (maybeCancel !== undefined) {
-			maybeCancel();
-		}
-	};
-	const cancelPromise: Promise<void> = new Promise((resolve) => {
-		maybeCancel = resolve;
-	});
-	const promise = Promise.race([delay(duration), cancelPromise]);
-	return { promise, cancel };
-}
-
 export class RGBLed {
 	private leds: [Led, Led, Led];
-	private animation: AnimationFunction;
-	private period: number; // in ms
-	private alive = true;
-	private wakeUp = () => {
-		// noop until this.loop() is called
-	};
-	private lastRequestedColorSet = () => {
-		// noop until this.setAnimation() is called
-	};
 
 	constructor(names: [string, string, string]) {
 		this.leds = names.map((name) => new Led(name)) as [Led, Led, Led];
-		this.setStaticColor([0, 0, 0]);
-		this.loop();
 	}
 
 	public async close() {
-		this.alive = false;
-		this.wakeUp();
-		await Promise.all(
-			this.leds.map((l) => {
-				l.close();
-			}),
-		);
+		await Promise.all(this.leds.map((l) => l.close()));
 	}
 
-	private setFrequency(frequency: number) {
-		if (frequency < 0) {
-			throw new Error('frequency must be greater or equal to 0');
-		}
-		this.period = 1000 / frequency;
-		this.wakeUp();
-	}
-
-	private async loop() {
-		while (this.alive) {
-			const start = new Date().getTime();
-			await this.setColor(this.animation(start));
-			// Signal that the requested color has been set
-			this.lastRequestedColorSet();
-			const end = new Date().getTime();
-			const duration = end - start;
-			const { promise, cancel } = cancellableDelay(this.period - duration);
-			this.wakeUp = cancel;
-			await promise;
-		}
-	}
-
-	public async setAnimation(animation: AnimationFunction, frequency = 10) {
-		this.animation = animation;
-		this.setFrequency(frequency);
-		await new Promise<void>((resolve) => {
-			this.lastRequestedColorSet = resolve;
-		});
-	}
-
-	public async setStaticColor(color: Color) {
-		await this.setAnimation(() => color, 0);
-	}
-
-	private async setColor(color: Color) {
+	public async setColor(color: Color) {
 		await Promise.all([
 			this.leds[0].setIntensity(color[0]),
 			this.leds[1].setIntensity(color[1]),
@@ -159,13 +82,85 @@ export class RGBLed {
 	}
 }
 
+export class Animator {
+	private intervalId?: NodeJS.Timeout;
+	private lastUpdate?: Promise<void>;
+	private updating = false;
+
+	constructor(
+		public mapping: Array<{ animation: AnimationFunction; rgbLeds: RGBLed[] }>,
+		frequency = 10,
+	) {
+		this.setFrequency(frequency);
+	}
+
+	public async setFrequency(frequency: number) {
+		if (frequency < 0) {
+			throw new Error('frequency must be greater or equal to 0');
+		}
+		const period = 1000 / frequency;
+		this.stop();
+		if (period === Infinity) {
+			// frequency is 0
+			if (this.lastUpdate !== undefined) {
+				await this.lastUpdate;
+			}
+		} else {
+			this.start(period);
+		}
+	}
+
+	private start(period: number) {
+		if (this.intervalId === undefined) {
+			this.intervalId = setInterval(() => {
+				this.updateOrSkip();
+			}, period);
+		}
+	}
+
+	private stop() {
+		if (this.intervalId !== undefined) {
+			clearInterval(this.intervalId);
+			this.intervalId = undefined;
+		}
+	}
+
+	private updateOrSkip() {
+		if (!this.updating) {
+			this.lastUpdate = this.update();
+		}
+	}
+
+	private async update() {
+		this.updating = true;
+		const t = new Date().getTime() / 1000;
+		const promises: Array<Promise<void>> = [];
+		for (const { animation, rgbLeds } of this.mapping) {
+			const color = animation(t);
+			promises.push(...rgbLeds.map((rgbLed) => rgbLed.setColor(color)));
+		}
+		await Promise.all(promises);
+		this.updating = false;
+	}
+}
+
+export function sin01(t: number) {
+	// sin(t) but the output is in the [0, 1] range
+	return (1 + Math.sin(t)) / 2;
+}
+
 // Example animations:
 export function breatheGreen(t: number): Color {
-	const intensity = (1 + Math.sin(t / 1000)) / 2;
-	return [0, intensity, 0];
+	return [0, sin01(t), 0];
+}
+
+const THIRD_OF_PI = Math.PI / 3;
+
+export function rainbow(t: number): Color {
+	return [sin01(t), sin01(t + 2 * THIRD_OF_PI), sin01(t + 4 * THIRD_OF_PI)];
 }
 
 export function blinkWhite(t: number): Color {
-	const intensity = Math.floor(t / 1000) % 2;
+	const intensity = Math.floor(t) % 2;
 	return [intensity, intensity, intensity];
 }
