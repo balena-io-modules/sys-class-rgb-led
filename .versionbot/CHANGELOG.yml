@@ -1,4 +1,21 @@
 - commits:
+    - subject: Add example etcher-pro rainbow animation
+      hash: dbfa6e2f33150c5983ffc6e42ae2e6d3870a8e1a
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Alexis Svinartchouk
+    - subject: 'Use one setInterval instead of a loop for each led, t in seconds'
+      hash: ae5d6181d7b15c2966ddb0253c903fbfed45e5d5
+      body: ''
+      footer:
+        Change-type: major
+        change-type: major
+      author: Alexis Svinartchouk
+  version: 3.0.0
+  date: 2020-12-03T16:02:18.922Z
+- commits:
     - subject: Replace resin-lint with @balena/lint
       hash: 73294e1921c45a30cddb60cc1577c1fab03ca4c5
       body: ''
